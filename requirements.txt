@@ -1,0 +1,52 @@
+# Zoozanaghe — Requirements
+# Version: 1.0.0
+# Date: 2025-09-14
+
+# Core Dependencies
+pyTelegramBotAPI==4.14.0
+requests==2.31.0
+Pillow==10.0.1
+numpy==1.24.3
+opencv-python==4.8.1.78
+sounddevice==0.4.6
+wavio==0.0.8
+soundfile==0.12.1
+psutil==5.9.5
+
+# Cryptography & Security
+pycryptodome==3.19.0
+pywin32==306
+cryptography==41.0.4
+
+# Browser Data Extraction
+beautifulsoup4==4.12.2
+lxml==4.9.3
+
+# Discord Integration
+discord.py==2.3.2
+discord-webhook==1.1.0
+
+# System Integration
+pycaw==20230408
+comtypes==1.2.0
+pyautogui==0.9.54
+keyboard==0.13.5
+mouse==0.7.1
+
+# Additional Utilities
+python-dateutil==2.8.2
+pyperclip==1.8.2
+qrcode==7.4.2
+pypiwin32==223
+
+# Development & Testing
+pytest==7.4.2
+pytest-cov==4.1.0
+black==23.9.1
+flake8==6.1.0
+mypy==1.5.1
+
+# Optional Dependencies (for specific features)
+# pyaudio==0.2.11  # Alternative audio recording
+# screeninfo==0.8.1  # Multi-monitor support
+# pygetwindow==0.0.9  # Window management

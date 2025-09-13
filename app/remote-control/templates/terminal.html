@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="terminal-container">
+    <div class="terminal-header">
+        <h3>Terminal - {{ system_id }}</h3>
+    </div>
+    <div id="terminal-output"></div>
+    <div class="terminal-input">
+        <span>$</span>
+        <input type="text" id="terminal-command" autocomplete="off">
+    </div>
+</div>
+
+<script src="/static/js/terminal.js"></script>
+{% endblock %}

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Zoozanaghe{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
+</head>
+<body class="cosmic-dark-theme">
+    <div id="cosmic-bg" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;"></div>    
+    <div id="particles-js" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>    
+    <div class="container-fluid px-4 py-4">
+        <div class="main-content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    {% block scripts %}{% endblock %}
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof THREE !== 'undefined') {
+            initCosmicBackground();
+        }        
+        if (typeof particlesJS !== 'undefined') {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 120,
+                        "density": {
+                            "enable": true,
+                            "value_area": 1000
+                        }
+                    },
+                    "color": {
+                        "value": "#6a0dad"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.7,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 0.5,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 2.5,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 3,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 180,
+                        "color": "#4b0082",
+                        "opacity": 0.3,
+                        "width": 1.2
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 0.8,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": true,
+                            "rotateX": 800,
+                            "rotateY": 1600
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "repulse"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "repulse": {
+                            "distance": 100,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 6
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        }
+        
+        function initCosmicBackground() {
+            const container = document.getElementById('cosmic-bg');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ 
+                alpha: false,
+                antialias: true,
+                powerPreference: "high-performance"
+            });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x050011, 1);
+            container.appendChild(renderer.domElement);
+            
+            const galaxyGeometry = new THREE.BufferGeometry();
+            const starCount = 5000;
+            
+            const positions = new Float32Array(starCount * 3);
+            const colors = new Float32Array(starCount * 3);
+            const sizes = new Float32Array(starCount);
+            
+            const radius = 5;
+            
+            for (let i = 0; i < starCount; i++) {
+                const r = radius * Math.pow(Math.random(), 0.5);
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                
+                positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+                positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+                positions[i * 3 + 2] = r * Math.cos(phi);
+                
+                colors[i * 3] = 0.4 + Math.random() * 0.6; // R
+                colors[i * 3 + 1] = 0.1 + Math.random() * 0.3; // G
+                colors[i * 3 + 2] = 0.6 + Math.random() * 0.4; // B
+                
+                sizes[i] = 0.1 + Math.random() * 0.5;
+            }
+            
+            galaxyGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            galaxyGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            galaxyGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            
+            const galaxyMaterial = new THREE.PointsMaterial({
+                size: 0.2,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.9,
+                sizeAttenuation: true,
+                blending: THREE.AdditiveBlending
+            });
+            
+            const galaxy = new THREE.Points(galaxyGeometry, galaxyMaterial);
+            scene.add(galaxy);
+            
+            const nebulaGeometry = new THREE.SphereGeometry(10, 32, 32);
+            const nebulaMaterial = new THREE.MeshBasicMaterial({
+                color: 0x4b0082,
+                transparent: true,
+                opacity: 0.15,
+                side: THREE.BackSide
+            });
+            
+            const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
+            scene.add(nebula);
+            
+            const blackHoleGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+            const blackHoleMaterial = new THREE.MeshBasicMaterial({
+                color: 0x000000,
+                transparent: true,
+                opacity: 0.9
+            });
+            
+            const blackHole = new THREE.Mesh(blackHoleGeometry, blackHoleMaterial);
+            scene.add(blackHole);
+            
+            camera.position.z = 7;
+            
+            gsap.to(galaxy.rotation, {
+                x: Math.PI * 0.1,
+                y: Math.PI * 2,
+                duration: 120,
+                repeat: -1,
+                ease: "none"
+            });
+            
+            gsap.to(nebula.rotation, {
+                x: Math.PI * 0.05,
+                y: Math.PI * -1.5,
+                duration: 180,
+                repeat: -1,
+                ease: "none"
+            });
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                blackHole.scale.x = 1 + Math.sin(Date.now() * 0.001) * 0.05;
+                blackHole.scale.y = 1 + Math.sin(Date.now() * 0.001) * 0.05;
+                blackHole.scale.z = 1 + Math.sin(Date.now() * 0.001) * 0.05;
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            let resizeTimeout;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(function() {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                }, 200);
+            });
+        }
+    });
+    </script>
+</body>
+</html>

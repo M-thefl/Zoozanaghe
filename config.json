@@ -1,0 +1,8 @@
+{
+  "startup_name": "windows",
+  "webhook_url": "",
+  "telegram_config": {
+    "bot_token": "",
+    "chat_id": ""
+  }
+}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card mb-5" style="transform-style: preserve-3d; perspective: 1000px;">
+    <div class="card-header">
+        <h2 class="neon-text"><i class="fas fa-server me-2"></i>Systems</h2>
+    </div>
+    <div class="card-body">
+        {% if not systems %}
+        <div class="alert alert-warning">No systems found in database.</div>
+        {% else %}
+        <div class="table-responsive">
+            <table class="table table-hover table-dark">
+                <thead class="glow-header">
+                    <tr>
+                        <th><i class="fas fa-id-card"></i> ID</th>
+                        <th><i class="fas fa-tag"></i> Name</th>
+                        <th><i class="fas fa-desktop"></i> PC Name</th>
+                        <th><i class="fab fa-windows"></i> OS</th>
+                        <th><i class="fas fa-calendar-alt"></i> Date</th>
+                        <th><i class="fas fa-cog"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for system in systems %}
+                    <tr class="hover-grow">
+                        <td>{{ system['id'] }}</td>
+                        <td>{{ system['name'] }}</td>
+                        <td>{{ system['pc_name'] }}</td>
+                        <td>{{ system['os_info'] }}</td>
+                        <td>{{ system['timestamp'] }}</td>
+                        <td>
+                            <a href="{{ url_for('view_system', system_id=system['id']) }}" 
+                               class="btn btn-sm btn-primary btn-glow view-btn"
+                               style="transform: translateZ(20px)">
+                                <i class="fas fa-eye me-1"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.glass-card');
+    
+    cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg) translateY(-5px)`;
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'rotateY(0deg) rotateX(0deg) translateY(-5px)';
+        });
+    });
+
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            console.log('Navigating to:', this.href);
+        });
+    });
+});
+</script>
+{% endblock %}
