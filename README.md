@@ -257,6 +257,18 @@ The Zoozanaghe Web Interface provides a comprehensive dashboard for viewing and 
 └─────────────────┘ └──────────────────┘ └─────────────────┘
 ```
 
+
+<img width="1918" height="831" alt="image" src="https://github.com/user-attachments/assets/9c57679b-ef53-4c5a-8a88-d10b30148be4" />
+
+<img width="1920" height="1033" alt="image" src="https://github.com/user-attachments/assets/3cf5d4b8-0120-404d-8ae4-a032583797b6" />
+<img width="1920" height="1036" alt="image" src="https://github.com/user-attachments/assets/b1d4b211-670f-4057-bab7-70fb5f10f78f" />
+
+
+
+
+
+
+
 ### 🔄 Data Flow
 1. **📥 Data Reception** - JSON data posted to `/save_data` endpoint
 2. **💾 Data Storage** - Information stored in structured SQLite database
