@@ -645,6 +645,7 @@ SOFTWARE.
 
 ## 🌟 Community
 Join our Discord community for discussions
+https://discord.gg/K2RdmqrM93
 
 Participate in security research collaborations
 
