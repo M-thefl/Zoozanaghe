@@ -60,7 +60,7 @@ Zoozanaghe (𐌅𐌋) is a sophisticated remote administration framework designe
 
 1. **Clone Repository**
    ```bash
-   git clone https://github.com/yourusername/zoozanaghe.git
+   git clone https://github.com/M-thefl/zoozanaghe.git
    cd zoozanaghe
 2. **Install Dependencies**
    ```bash
